@@ -1,6 +1,4 @@
-<div style="width:10%;">
-  <img src="logo.jpg" alt="My Image">
-</div>
+<img src="logo.jpg" alt="My Image" width="300"/>
 # MLSD - Social Media Sentiment Analysis and Trend Forecasting
 
 This project focuses on using a large collection of tweets to predict their sentiment polarity (0 = negative, 4 = positive). By analyzing individual tweet sentiments, we aim to infer overall trends and gain insights into public opinion on various topics.
