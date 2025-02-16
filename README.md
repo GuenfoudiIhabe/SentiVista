@@ -1,4 +1,4 @@
-<div style="width:50%;">
+<div style="width:10%;">
   <img src="logo.jpg" alt="My Image">
 </div>
 # MLSD - Social Media Sentiment Analysis and Trend Forecasting
