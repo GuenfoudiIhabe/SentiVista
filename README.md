@@ -1,4 +1,6 @@
-<img src="logo.jpg" alt="My Image" width="450"/>
+<p align="center">
+  <img src="logo.jpg" alt="My Image" width="450"/>
+</p>
 
 # MLSD - Social Media Sentiment Analysis and Trend Forecasting
 
