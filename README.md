@@ -30,7 +30,7 @@ Our primary goal is to develop a robust model capable of forecasting trends base
 - **Public Opinion Analysis:** Gaining an understanding of large-scale opinions on brands, political decisions, and other areas of interest.
 - **Event Impact Analysis:** Analyzing how public sentiment evolves before, during, and after significant events such as elections or product launches.
 
-## Project Team
+## SentiVista Team
 
 - **DI RENZO Julien** - [julien.direnzo@student.uliege.be](mailto:julien.direnzo@student.uliege.be)
 - **FLOREA Robert** - [robert.florea@student.uliege.be](mailto:robert.florea@student.uliege.be)
