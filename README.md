@@ -2,42 +2,174 @@
   <img src="logo.jpg" alt="My Image" width="400"/>
 </p>
 
-# MLSD - Social Media Sentiment Analysis and Trend Forecasting
+# SentiVista: Social Media Sentiment Analysis
 
-This project focuses on using a large collection of tweets to predict their sentiment polarity (0 = negative, 4 = positive). By analyzing individual tweet sentiments, we aim to infer overall trends and gain insights into public opinion on various topics.
+## 📊 Overview
 
-## Project Description
+SentiVista is an advanced sentiment analysis system that analyzes text content to determine emotional tone. Using machine learning models trained on the Sentiment140 dataset (1.6 million tweets), SentiVista can accurately classify text as expressing positive or negative sentiment with approximately 77% accuracy.
 
-The idea behind this project is to leverage sentiment analysis to forecast trends in social media discussions. We plan to utilize a dataset of 1.6 million tweets (the Sentiment140 dataset) to train a model that predicts tweet polarity. Once we determine the polarity of each tweet, we will analyze the distribution and patterns of these sentiments to identify trends and significant shifts in public sentiment over time.
+## 🔍 Key Features
 
-## Project Data
+- **Dual Model Architecture:** Uses both Naive Bayes and Logistic Regression models
+- **Text Preprocessing Pipeline:** Removes noise and normalizes text data
+- **Feature Engineering:** Combines TF-IDF vectorization with metadata features
+- **REST API:** Simple HTTP interface for real-time sentiment prediction
+- **Interactive Web Interface:** Test predictions through a user-friendly UI
+- **Comprehensive Test Suite:** Evaluates model performance across various text types
 
-We will be using the [Sentiment140 dataset with 1.6 million tweets](https://www.kaggle.com/kazanova/sentiment140) available on Kaggle. This dataset consists of tweets published around 2009 and includes the following fields:
-- **Tweet ID:** Unique identifier for each tweet.
-- **Tweet Text:** The content of the tweet.
-- **Date Published:** Timestamp of when the tweet was published.
-- **Username:** Twitter handle of the tweet's author.
-- **Query:** The query used to retrieve the tweet (if available).
-- **Sentiment Score:** A manually annotated score indicating the sentiment (0 for negative, 4 for positive).
+## 🛠️ Technical Implementation
 
+### Preprocessing Pipeline
 
-## Project Goals
+### Feature Engineering
+- **TF-IDF Vectorization:** 10,000 text features capturing word importance
+- **Metadata Features:** Tweet length, hashtag count, mention count
+- **Combined Features:** 10,003 total features per text sample
 
-Our primary goal is to develop a robust model capable of forecasting trends based on sentiment analysis. By predicting the polarity of tweets, we aim to extract meaningful insights that can be applied to several domains:
+### Models
 
-- **Real-time Trend Monitoring:** Detecting emerging topics and changes in public sentiment related to news, politics, etc.
-- **Stock Market Insights:** Correlating sentiment trends with market movements to inform trading strategies.
-- **Public Opinion Analysis:** Gaining an understanding of large-scale opinions on brands, political decisions, and other areas of interest.
-- **Event Impact Analysis:** Analyzing how public sentiment evolves before, during, and after significant events such as elections or product launches.
+| Model | Accuracy | Precision | Recall | F1 Score |
+|-------|----------|-----------|--------|----------|
+| Naive Bayes | 76% | 76% | 76% | 76% |
+| Logistic Regression | 77% | 77% | 77% | 77% |
 
-## SentiVista Team
+## 📋 Installation & Setup
+
+### For All Platforms
+
+1. **Clone the repository:**
+   ```
+   git clone https://github.com/yourusername/sentivista.git
+   cd sentivista
+   ```
+
+### Windows
+
+2. **Start the application:**
+   ```
+   python app.py
+   ```
+   
+3. **Access the web interface:**
+   Open your browser and navigate to http://localhost:5000
+
+### macOS/Linux
+
+2. **Start the application:**
+   ```
+   python3 app.py
+   ```
+   
+3. **Access the web interface:**
+   Open your browser and navigate to http://localhost:5000
+
+## 🚀 Usage Examples
+
+### Web Interface
+Access the web UI at http://localhost:5000 after starting the server.
+
+Example workflow:
+1. Enter your text in the input field
+2. Click "Analyze Sentiment"
+3. View the sentiment analysis results with confidence score
+
+### API Endpoint
+
+SentiVista provides a RESTful API for sentiment analysis:
+
+**Endpoint:** `/predict`
+
+**Method:** POST
+
+**Request Body:**
+```json
+{
+  "texts": ["Your text to analyze"]
+}
+```
+
+**Response:**
+```json
+{
+  "predictions": [
+    4
+  ],
+  "sentiment_labels": [
+    "Positive"
+  ]
+}
+```
+
+**Example using curl (all platforms):**
+```bash
+curl -X POST http://localhost:5000/predict -H "Content-Type: application/json" -d "{\"texts\":[\"I love this product, it works great!\"]}"
+```
+
+**Example using PowerShell (Windows):**
+```powershell
+Invoke-WebRequest -Uri "http://localhost:5000/predict" -Method Post -ContentType "application/json" -Body '{"texts": ["I love this product, it works great!"]}'
+```
+
+### Testing Script
+
+For batch processing and testing, use the included `test_api.py` script:
+
+```bash
+# Windows
+python test_api.py
+
+# macOS/Linux
+python3 test_api.py
+```
+
+The `test_api.py` file contains a ready-to-use script that tests multiple examples and outputs the sentiment analysis results. You can easily modify this file to test your own text samples.
+
+## 🔬 Project Goals
+
+- **Real-time Sentiment Monitoring:** Track public opinion on current events
+- **Trend Analysis:** Identify emerging topics and sentiment shifts
+- **Market Intelligence:** Gauge customer reactions to products and services
+- **Public Opinion Research:** Analyze feedback at scale
+
+## 🧠 How It Works
+
+1. **Text Processing:** Cleans and normalizes input text
+2. **Feature Extraction:** Converts text to 10,003-dimensional vectors
+3. **Model Prediction:** Applies ML models to determine sentiment polarity
+4. **Result Classification:** Returns sentiment as "Positive" or "Negative"
+
+## 📁 Project Data
+
+We use the [Sentiment140 dataset with 1.6 million tweets](https://www.kaggle.com/kazanova/sentiment140) available on Kaggle. This dataset consists of tweets published around 2009 and includes:
+
+- **Tweet ID:** Unique identifier for each tweet
+- **Tweet Text:** The content of the tweet
+- **Date Published:** Timestamp of when the tweet was published
+- **Username:** Twitter handle of the tweet's author
+- **Query:** The query used to retrieve the tweet (if available)
+- **Sentiment Score:** A manually annotated score indicating the sentiment (0 for negative, 4 for positive)
+
+## 📁 Repository Structure
+
+```
+SentiVista/
+├── app.py                  # Flask API and web interface
+├── model.ipynb             # Model training and evaluation
+├── test_api.py             # API testing script
+├── tfidf_vectorizer.pkl    # Saved vectorizer
+├── sentiment_model_lr.pkl  # Logistic Regression model
+├── sentiment_model_nb.pkl  # Naive Bayes model
+└── README.md               # Documentation
+```
+
+## 👥 SentiVista Team
 
 - **DI RENZO Julien** - [julien.direnzo@student.uliege.be](mailto:julien.direnzo@student.uliege.be)
 - **FLOREA Robert** - [robert.florea@student.uliege.be](mailto:robert.florea@student.uliege.be)
 - **GUENFOUDI Ihabe** - [ihabe.guenfoudi@student.uliege.be](mailto:ihabe.guenfoudi@student.uliege.be)
 - **LEFEVRE Thibaut** - [thibaut.lefevre@student.uliege.be](mailto:thibaut.lefevre@student.uliege.be)
 
-## Contact
+## 📞 Contact
 
 - [t.vrancken@uliege.be](mailto:t.vrancken@uliege.be)
 - [Matthias.Pirlet@uliege.be](mailto:Matthias.Pirlet@uliege.be)
