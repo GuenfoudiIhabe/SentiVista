@@ -35,38 +35,27 @@ SentiVista is an advanced sentiment analysis system that analyzes text content t
 
 ## 📋 Installation & Setup
 
-### For All Platforms
 
-1. **Clone the repository:**
+### **Clone the repository:**
    ```
    git clone https://github.com/yourusername/sentivista.git
    cd sentivista
    ```
 
-### Windows
+### **Run locally in container**
 
-2. **Start the application:**
-   ```
-   python app.py
-   ```
-   
-3. **Access the web interface:**
-   Open your browser and navigate to http://localhost:5000
+  - start Docker Desktop
+  - in the same directory as the root of the project
+  ´´´
+    docker build -t app .
+    docker run -p 9090:8080 app
+  ```
 
-### macOS/Linux
-
-2. **Start the application:**
-   ```
-   python3 app.py
-   ```
-   
-3. **Access the web interface:**
-   Open your browser and navigate to http://localhost:5000
 
 ## 🚀 Usage Examples
 
 ### Web Interface
-Access the web UI at http://localhost:5000 after starting the server.
+Access the web UI at http://localhost:9090 after starting the server.
 
 Example workflow:
 1. Enter your text in the input field
@@ -102,12 +91,12 @@ SentiVista provides a RESTful API for sentiment analysis:
 
 **Example using curl (all platforms):**
 ```bash
-curl -X POST http://localhost:5000/predict -H "Content-Type: application/json" -d "{\"texts\":[\"I love this product, it works great!\"]}"
+curl -X POST http://localhost:9090/predict -H "Content-Type: application/json" -d "{\"texts\":[\"I love this product, it works great!\"]}"
 ```
 
 **Example using PowerShell (Windows):**
 ```powershell
-Invoke-WebRequest -Uri "http://localhost:5000/predict" -Method Post -ContentType "application/json" -Body '{"texts": ["I love this product, it works great!"]}'
+Invoke-WebRequest -Uri "http://localhost:9090/predict" -Method Post -ContentType "application/json" -Body '{"texts": ["I love this product, it works great!"]}'
 ```
 
 ### Testing Script
