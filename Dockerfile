@@ -1,4 +1,6 @@
-FROM python:3.9
+FROM python:3.9-slim
+
+ENV PYTHONUNBUFFERED True
 
 WORKDIR /app
 
@@ -7,14 +9,8 @@ COPY sentiment_model_lr.pkl /app
 COPY tfidf_vectorizer.pkl /app
 COPY requirements.txt /app
 
-# Make port 8080 available to the world outside this container
-EXPOSE 8080
+ENV PORT 5001
 
-# Install any needed packages specified in requirements.txt
 RUN pip install -r requirements.txt
 
-# Define environment variable
-ENV FLASK_APP=app.py
-
-# Run hello.py when the container launches
-CMD ["flask", "run", "--host=0.0.0.0", "--port=8080"]
+CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 app:app
