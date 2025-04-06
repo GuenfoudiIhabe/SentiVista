@@ -65,7 +65,7 @@ Example workflow:
 ### ☁️ Web Interface (cloud)
 
 The app is currently running on the cloud at https://app-24294949938.europe-west1.run.app .
-I is not garantied to be up at any moment but at least during the review.
+It is not garantied to be up at any moment but at least during the review.
 
 ### API Endpoint
 
