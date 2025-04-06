@@ -46,7 +46,7 @@ SentiVista is an advanced sentiment analysis system that analyzes text content t
 
   - start Docker Desktop
   - in the same directory as the root of the project
-  ´´´
+  ```
     docker build -t app .
     docker run -p 9090:8080 app
   ```
