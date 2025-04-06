@@ -4,6 +4,13 @@
 
 # SentiVista: Social Media Sentiment Analysis
 
+## **Milestone 2 Review**
+
+What's new ?
+- few modifications in app.py
+- Dockerfile + requirements.txt
+- cloud deployement (https://app-24294949938.europe-west1.run.app)
+
 ## 📊 Overview
 
 SentiVista is an advanced sentiment analysis system that analyzes text content to determine emotional tone. Using machine learning models trained on the Sentiment140 dataset (1.6 million tweets), SentiVista can accurately classify text as expressing positive or negative sentiment with approximately 77% accuracy.
