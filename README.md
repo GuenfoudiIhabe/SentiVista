@@ -33,7 +33,7 @@ SentiVista is an advanced sentiment analysis system that analyzes text content t
 | Naive Bayes | 76% | 76% | 76% | 76% |
 | Logistic Regression | 77% | 77% | 77% | 77% |
 
-## 📋 Installation & Setup
+## 📋 Installation & Setup (local)
 
 
 ### **Clone the repository:**
@@ -42,25 +42,30 @@ SentiVista is an advanced sentiment analysis system that analyzes text content t
    cd sentivista
    ```
 
-### **Run locally in container**
+### **Run in container**
 
   - start Docker Desktop
   - in the same directory as the root of the project
   ```
     docker build -t app .
-    docker run -p 9090:8080 app
+    docker run -p 5001:5001 app
   ```
 
 
 ## 🚀 Usage Examples
 
-### Web Interface
-Access the web UI at http://localhost:9090 after starting the server.
+### Web Interface (local)
+Access the web UI at http://localhost:5001 after starting the server.
 
 Example workflow:
 1. Enter your text in the input field
 2. Click "Analyze Sentiment"
 3. View the sentiment analysis results with confidence score
+
+### ☁️ Web Interface (cloud)
+
+The app is currently running on the cloud at https://app-24294949938.europe-west1.run.app .
+I is not garantied to be up at any moment but at least during the review.
 
 ### API Endpoint
 
@@ -89,15 +94,18 @@ SentiVista provides a RESTful API for sentiment analysis:
 }
 ```
 
-**Example using curl (all platforms):**
+**Example using curl (all platforms, local run):**
 ```bash
-curl -X POST http://localhost:9090/predict -H "Content-Type: application/json" -d "{\"texts\":[\"I love this product, it works great!\"]}"
+curl -X POST http://localhost:5001/predict -H "Content-Type: application/json" -d "{\"texts\":[\"I love this product, it works great!\"]}"
 ```
 
-**Example using PowerShell (Windows):**
+**Example using PowerShell (Windows, local run):**
 ```powershell
-Invoke-WebRequest -Uri "http://localhost:9090/predict" -Method Post -ContentType "application/json" -Body '{"texts": ["I love this product, it works great!"]}'
+Invoke-WebRequest -Uri "http://localhost:5001/predict" -Method Post -ContentType "application/json" -Body '{"texts": ["I love this product, it works great!"]}'
 ```
+
+**Example with the Cloud-hosted application:**
+*Idem but replace the ```localhost``` url by the "real" one.*
 
 ### Testing Script
 
