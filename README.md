@@ -151,9 +151,12 @@ We use the [Sentiment140 dataset with 1.6 million tweets](https://www.kaggle.com
 ```
 SentiVista/
 ├── app.py                  # Flask API and web interface
+├── Dockerfile              # Build container
+├── requirements.txt        # Required packages to run the app
 ├── model.ipynb             # Model training and evaluation
+├── EDA.ipynb               # Dataset exploration
 ├── test_api.py             # API testing script
-├── tfidf_vectorizer.pkl    # Saved vectorizer
+├── tfidf_vectorizer.pkl    # Saved vectorizer (preprocess data)
 ├── sentiment_model_lr.pkl  # Logistic Regression model
 ├── sentiment_model_nb.pkl  # Naive Bayes model
 └── README.md               # Documentation
