@@ -45,7 +45,7 @@ def preprocessing_op(
     df.to_csv(preprocessed_dataset.path, index=False)
     logging.info(f"Preprocessed dataset saved to: {preprocessed_dataset.path}")
 
- # Normalize tweets with improved function to handle errors
+# Normalize tweets with improved function to handle errors
 def safe_normalize(text):
     try:
         if pd.isna(text) or text == '':

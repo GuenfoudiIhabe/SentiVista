@@ -12,7 +12,7 @@ from src.training import training
 from src.evaluation import evaluation
 
 @pipeline(
-    name="houseprice_pipeline",
+    name="sentivista-pipeline",
     pipeline_root=PIPELINE_ROOT
 )
 def sentivista():
@@ -26,15 +26,13 @@ def sentivista():
     training_task = training(
         preprocessed_dataset=preprocessing_task.outputs["preprocessed_dataset"],
         hyperparameters={
-            "n_estimators": 100,
-            "max_depth": 10,
-            "random_state": 42
+            # Hyperparameters for the model
         }
     )
     
     evaluation_task = evaluation(
         model=training_task.outputs["model"],
-        test_set=training_task.outputs["test_set"]
+        preprocessed_dataset=preprocessing_task.outputs["preprocessed_dataset"],
     )
 
 compiler.Compiler().compile(
