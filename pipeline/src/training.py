@@ -20,7 +20,8 @@ from src.config import BASE_IMAGE
 )
 def training_op(
         preprocessed_dataset: Input[Dataset],
-        model: Output[Model],
+        old_model: Input[Model],
+        new_model: Output[Model],
         metrics: Output[Metrics],
         hyperparameters: dict
     ):
@@ -40,7 +41,7 @@ def training_op(
     y_test = test_df['target']
     
     #Import the model
-    model = joblib.load(model.path)
+    model = joblib.load(old_model.path)
     
     # Initialize the model with hyperparameters
     model = model(**hyperparameters)
@@ -62,7 +63,7 @@ def training_op(
     df_metrics.to_csv(metrics.path, index=False)
     
     #Save the model
-    joblib.dump(model, model.path)
+    joblib.dump(model, new_model.path)
     
     logging.info(f"Model saved to: {model.path}")
     logging.info(f"Metrics saved to: {metrics.path}")
