@@ -30,7 +30,7 @@ def data_ingestion_op(
     
     logging.info("Starting data ingestion...")
     
-    #A CHANGER EN FONCTION DE COMMENT ON STORE NOS DATA
+    #Load dataset from GCS
     GCS_BUCKET = "gs://sentivista-453008_cloudbuild"
     FILE_PATH = f"{GCS_BUCKET}/data/sentivista.csv"
     
@@ -38,8 +38,8 @@ def data_ingestion_op(
     fs = gcsfs.GCSFileSystem()
     with fs.open(FILE_PATH, 'r') as f:
         df = pd.read_csv(f)
-        
     
+    #Store the dataset in the output artifact
     logging.info(f"Saving dataset to {dataset.path}...")
     df.to_csv(dataset.path, index=False)
     

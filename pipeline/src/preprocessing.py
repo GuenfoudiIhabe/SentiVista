@@ -11,9 +11,6 @@ from kfp.v2.dsl import (
     pipeline     # For defining the pipeline
 )
 from src.config import BASE_IMAGE
-import re
-import emoji
-import pandas as pd
 
 @component(
     base_image=BASE_IMAGE,
@@ -25,6 +22,41 @@ def preprocessing_op(
     ):
     import pandas as pd
     import logging
+    import re
+    import emoji
+    
+    # Normalize tweets with improved function to handle errors
+    def safe_normalize(text):
+        try:
+            if pd.isna(text) or text == '':
+                return ''
+            return normalizeTweet(str(text))
+        except Exception as e:
+            print(f"Error normalizing text: {str(e)}")
+            return str(text)  # Return original text if normalization fails
+
+    def normalizeTweet(tweet):
+        """
+        Normalize tweet text:
+        1. Replace URLs with HTTPURL
+        2. Replace user mentions with @USER
+        3. Replace emojis with text
+        4. Other normalizations for Twitter-specific content
+        """
+        # Replace URLs with HTTPURL
+        tweet = re.sub(r'https?://\S+', 'HTTPURL', tweet)
+        
+        # Replace user mentions with @USER
+        tweet = re.sub(r'@\w+', '@USER', tweet)
+        
+        # Replace emojis with text representation
+        tweet = emoji.demojize(tweet)
+        
+        # Other normalizations
+        tweet = tweet.replace('#', ' #')  # Add space before hashtags
+        tweet = re.sub(r'\s+', ' ', tweet)  # Replace multiple spaces with single space
+        
+        return tweet.strip()
 
     seed = 42
     df = pd.read_csv(input_dataset.path)
@@ -44,36 +76,3 @@ def preprocessing_op(
     
     df.to_csv(preprocessed_dataset.path, index=False)
     logging.info(f"Preprocessed dataset saved to: {preprocessed_dataset.path}")
-
-# Normalize tweets with improved function to handle errors
-def safe_normalize(text):
-    try:
-        if pd.isna(text) or text == '':
-            return ''
-        return normalizeTweet(str(text))
-    except Exception as e:
-        print(f"Error normalizing text: {str(e)}")
-        return str(text)  # Return original text if normalization fails
-
-def normalizeTweet(tweet):
-    """
-    Normalize tweet text:
-    1. Replace URLs with HTTPURL
-    2. Replace user mentions with @USER
-    3. Replace emojis with text
-    4. Other normalizations for Twitter-specific content
-    """
-    # Replace URLs with HTTPURL
-    tweet = re.sub(r'https?://\S+', 'HTTPURL', tweet)
-    
-    # Replace user mentions with @USER
-    tweet = re.sub(r'@\w+', '@USER', tweet)
-    
-    # Replace emojis with text representation
-    tweet = emoji.demojize(tweet)
-    
-    # Other normalizations
-    tweet = tweet.replace('#', ' #')  # Add space before hashtags
-    tweet = re.sub(r'\s+', ' ', tweet)  # Replace multiple spaces with single space
-    
-    return tweet.strip()
