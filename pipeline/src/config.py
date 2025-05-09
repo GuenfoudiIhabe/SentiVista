@@ -1,10 +1,10 @@
-BUCKET_NAME = "dw4-vertex"
-PIPELINE_ROOT_FOLDER = ""
+BUCKET_NAME = "sentivista-453008_cloudbuild"
+PIPELINE_ROOT_FOLDER = "pipelines/vertex"
 PIPELINE_ROOT = f"gs://{BUCKET_NAME}/{PIPELINE_ROOT_FOLDER}"
 
 PROJECT_ID ="sentivista-453008"
 REGION ="europe-west1"
-REPOSITORY ="vertex-ai-pipeline-example"
+REPOSITORY ="vertex"
 IMAGE_NAME ="training"
 IMAGE_TAG ="latest"
 BASE_IMAGE = f"{REGION}-docker.pkg.dev/{PROJECT_ID}/{REPOSITORY}/{IMAGE_NAME}:{IMAGE_TAG}"

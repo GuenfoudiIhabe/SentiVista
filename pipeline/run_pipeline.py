@@ -1,43 +1,33 @@
 from src.config import *
 
-from kfp.v2.dsl import (
-    pipeline     # For defining the pipeline
-)
-from kfp.v2 import compiler
-from google.cloud import aiplatform
+from kfp.v2.dsl        import pipeline
+from kfp.v2            import compiler
+from google.cloud      import aiplatform
 
-from src.data_ingestion import data_ingestion
-from src.preprocessing import preprocessing
-from src.training import training
-from src.evaluation import evaluation
+from src.data_ingestion import data_ingestion_op
+from src.preprocessing import preprocessing_op
+from src.training      import training_op
+from src.evaluation    import evaluation_op
 
 @pipeline(
     name="sentivista-pipeline",
     pipeline_root=PIPELINE_ROOT
 )
 def sentivista():
-    # Define the components
-    ingestion_task = data_ingestion()
-    
-    preprocessing_task = preprocessing(
-        input_dataset=ingestion_task.outputs["dataset"]
+    ingestion     = data_ingestion_op()
+    preprocessing = preprocessing_op(
+        input_dataset=ingestion.outputs["dataset"]
     )
-    
-    training_task = training(
-        preprocessed_dataset=preprocessing_task.outputs["preprocessed_dataset"],
-        hyperparameters={
-            # Hyperparameters for the model
-        }
+    training      = training_op(
+        preprocessed_dataset=preprocessing.outputs["preprocessed_dataset"]
     )
-    
-    evaluation_task = evaluation(
-        model=training_task.outputs["model"],
-        preprocessed_dataset=preprocessing_task.outputs["preprocessed_dataset"],
+    evaluation    = evaluation_op(
+        metrics=training.outputs["metrics"]
     )
 
 compiler.Compiler().compile(
     pipeline_func=sentivista,
-    package_path='sentivista.json'
+    package_path="sentivista.json"
 )
 
 aiplatform.init(project=PROJECT_ID, location=REGION)

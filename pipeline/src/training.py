@@ -20,53 +20,95 @@ from src.config import BASE_IMAGE
 )
 def training_op(
         preprocessed_dataset: Input[Dataset],
-        old_model: Input[Model],
-        new_model: Output[Model],
         metrics: Output[Metrics],
-        hyperparameters: dict
+        new_model: Output[Model],
     ):
+    import numpy as np
+    from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
     import pandas as pd
     import joblib
     import logging
     from sklearn.model_selection import train_test_split
-    from sklearn.metrics import mean_squared_error, r2_score
+    from transformers import AutoModelForSequenceClassification, AutoTokenizer, Trainer, TrainingArguments
 
-    # Load preprocessed dataset
+    def tokenize_function(examples):
+        return tokenizer(examples['cleaned_text'], truncation=True, padding='max_length', max_length=128)
+
+       # Enhanced metrics calculation
+    def compute_metrics(eval_pred):
+        logits, labels = eval_pred
+        predictions = np.argmax(logits, axis=-1)
+        
+        metrics = {
+            'accuracy': accuracy_score(labels, predictions),
+            'precision': precision_score(labels, predictions, pos_label=1),
+            'recall': recall_score(labels, predictions, pos_label=1),
+            'f1': f1_score(labels, predictions, pos_label=1)
+        }.DS_Store
+        
+        return metrics
+
+    #Load preprocessed dataset
     df = pd.read_csv(preprocessed_dataset.path)
     train_df, test_df = train_test_split(df, test_size=0.2, random_state=42)
     
-    x_train = train_df.drop(columns=['target'])
-    y_train = train_df['target']
-    x_test = test_df.drop(columns=['target'])
-    y_test = test_df['target']
+    #Tokenize the dataset
+    train_df = train_df.map(tokenize_function, batched=True)
+    test_df = test_df.map(tokenize_function, batched=True)
+    
+    # Set format for PyTorch
+    train_df.set_format(type='torch', columns=['input_ids', 'attention_mask', 'label'])
+    test_df.set_format(type='torch', columns=['input_ids', 'attention_mask', 'label'])
+    
+    #Define model path
+    model_path = "gs://sentivista-453008_cloudbuild/models/roberta/roberta_full_model"
     
     #Import the model
-    model = joblib.load(old_model.path)
+    model = AutoModelForSequenceClassification.from_pretrained(model_path, num_labels=2, ignore_mismatched_sizes=True)
+    tokenizer = AutoTokenizer.from_pretrained(model_path)
     
-    # Initialize the model with hyperparameters
-    model = model(**hyperparameters)
+    training_args = TrainingArguments(
+        output_dir="gs://sentivista-453008_cloudbuild/models/roberta/roberta_full_model",
+        num_train_epochs=3,  # Increased from 1 to 3 for better performance
+        per_device_train_batch_size=16,  # Reduced for larger dataset to avoid memory issues
+        per_device_eval_batch_size=32,
+        evaluation_strategy='steps',  # Evaluate at steps rather than just epochs for better monitoring
+        eval_steps=1000,  # Evaluate every 1000 steps
+        save_strategy='steps',
+        save_steps=1000,
+        logging_dir='./logs',
+        logging_steps=100,
+        load_best_model_at_end=True,
+        metric_for_best_model='accuracy',  # Use accuracy instead of loss
+        save_total_limit=2,  # Keep more checkpoints
+        report_to='none',  # Disable wandb reporting
+        # Add learning rate scheduling
+        learning_rate=5e-5,
+        warmup_steps=500,
+        weight_decay=0.01,  # Add weight decay for regularization
+        gradient_accumulation_steps=4,  # Accumulate gradients to effectively increase batch size
+        fp16=True  # Use mixed precision training if GPU supports it
+    )
+
+    # Create Trainer with enhanced configuration
+    trainer = Trainer(
+        model=model,
+        args=training_args,
+        train_dataset=train_df,
+        eval_dataset=test_df,
+        compute_metrics=compute_metrics
+    )
 
     #Train the model
-    model.fit(x_train, y_train)
-    
-    #Make predictions
-    predictions = model.predict(x_test)
+    trainer.train()
     
     #Metrics
-    mse = mean_squared_error(y_test, predictions)
-    r2 = r2_score(y_test, predictions)
-    
-    df_metrics = pd.DataFrame({
-        'Metric': ['MSE', 'R2'],
-        'Value': [mse, r2]
-    })
-    df_metrics.to_csv(metrics.path, index=False)
+    mtrcs = trainer.evaluate()
+    mtrcs.to_csv(metrics.path, index=False)
     
     #Save the model
     joblib.dump(model, new_model.path)
     
-    logging.info(f"Model saved to: {model.path}")
+    logging.info(f"Model saved to: {new_model.path}")
     logging.info(f"Metrics saved to: {metrics.path}")
-    logging.info(f"Validation MSE: {mse:.2f}")
-    logging.info(f"Validation R2: {r2:.2f}") 
     

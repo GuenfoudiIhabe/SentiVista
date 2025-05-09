@@ -19,28 +19,16 @@ from src.config import BASE_IMAGE
     output_component_file="evaluation.yaml"
 )
 def evaluation_op(
-    model: Input[Model],
-    preprocessed_dataset: Input[Dataset],
-    metrics: Output[Metrics]
+    metrics: Input[Metrics]
 ):
-    import pandas as pd
-    import joblib
-    from sklearn.metrics import mean_squared_error, r2_score
     import logging
+    import pandas as pd
 
-    model = joblib.load(model.path)
-    df = pd.read_csv(preprocessed_dataset.path)
-    
-    X_test = df.drop(columns=['target'])
-    y_test = df['target']
-
-    predictions = model.predict(X_test)
-    acc = mean_squared_error(y_test, predictions)
-    r2 = r2_score(y_test, predictions)
-    
-    df_metrics = pd.DataFrame({
-        'Metric': ['MSE', 'R2'],
-        'Value': [acc, r2]
-    })
-    df_metrics.to_csv(metrics.path, index=False)
-    logging.info(f"Metrics saved to: {metrics.path}")
+    logging("Evaluation metrics:")
+    for key, value in metrics.items():
+        logging.info(f"{key}: {value}")
+        
+    # Save metrics to CSV
+    metrics_df = pd.DataFrame([metrics])
+    metrics_df.to_csv("gs://sentivista-453008_cloudbuild/metrics/evaluation_metrics.csv", index=False)
+    logging.info("Metrics saved to GCS.")

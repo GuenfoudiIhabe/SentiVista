@@ -31,7 +31,7 @@ def data_ingestion_op(
     logging.info("Starting data ingestion...")
     
     #A CHANGER EN FONCTION DE COMMENT ON STORE NOS DATA
-    GCS_BUCKET = "gs://"
+    GCS_BUCKET = "gs://sentivista-453008_cloudbuild"
     FILE_PATH = f"{GCS_BUCKET}/data/sentivista.csv"
     
     logging.info(f"Loading dataset from {FILE_PATH}...")
