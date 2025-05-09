@@ -19,6 +19,7 @@ from src.config import BASE_IMAGE
     output_component_file="training.yaml"
 )
 def training_op(
+        model_checkpoint: str,
         preprocessed_dataset: Input[Dataset],
         metrics: Output[Metrics],
         new_model: Output[Model],
@@ -44,7 +45,7 @@ def training_op(
             'precision': precision_score(labels, predictions, pos_label=1),
             'recall': recall_score(labels, predictions, pos_label=1),
             'f1': f1_score(labels, predictions, pos_label=1)
-        }.DS_Store
+        }
         
         return metrics
 
@@ -61,14 +62,14 @@ def training_op(
     test_df.set_format(type='torch', columns=['input_ids', 'attention_mask', 'label'])
     
     #Define model path
-    model_path = "gs://sentivista-453008_cloudbuild/models/roberta/roberta_full_model"
+    model_path = model_checkpoint
     
     #Import the model
     model = AutoModelForSequenceClassification.from_pretrained(model_path, num_labels=2, ignore_mismatched_sizes=True)
     tokenizer = AutoTokenizer.from_pretrained(model_path)
     
     training_args = TrainingArguments(
-        output_dir="gs://sentivista-453008_cloudbuild/models/roberta/roberta_full_model",
+        output_dir=model_path,
         num_train_epochs=3,  # Increased from 1 to 3 for better performance
         per_device_train_batch_size=16,  # Reduced for larger dataset to avoid memory issues
         per_device_eval_batch_size=32,
@@ -107,7 +108,7 @@ def training_op(
     mtrcs.to_csv(metrics.path, index=False)
     
     #Save the model
-    joblib.dump(model, new_model.path)
+    model.save_pretrained(new_model.path)
     
     logging.info(f"Model saved to: {new_model.path}")
     logging.info(f"Metrics saved to: {metrics.path}")

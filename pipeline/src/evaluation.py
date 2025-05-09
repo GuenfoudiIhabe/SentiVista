@@ -19,6 +19,7 @@ from src.config import BASE_IMAGE
     output_component_file="evaluation.yaml"
 )
 def evaluation_op(
+    metrics_path: str,
     metrics: Input[Metrics]
 ):
     import logging
@@ -30,5 +31,5 @@ def evaluation_op(
         
     # Save metrics to CSV
     metrics_df = pd.DataFrame([metrics])
-    metrics_df.to_csv("gs://sentivista-453008_cloudbuild/metrics/evaluation_metrics.csv", index=False)
-    logging.info("Metrics saved to GCS.")
+    metrics_df.to_csv(metrics_path, index=False)
+    logging.info(f"Metrics saved to {metrics_path}")

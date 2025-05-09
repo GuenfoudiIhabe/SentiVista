@@ -20,6 +20,7 @@ from src.config import BASE_IMAGE
     output_component_file="data_ingestion.yaml"
 )
 def data_ingestion_op(
+        gcs_path: str,
         dataset: Output[Dataset]
     ):
     import pandas as pd
@@ -31,8 +32,7 @@ def data_ingestion_op(
     logging.info("Starting data ingestion...")
     
     #Load dataset from GCS
-    GCS_BUCKET = "gs://sentivista-453008_cloudbuild"
-    FILE_PATH = f"{GCS_BUCKET}/data/sentivista.csv"
+    FILE_PATH = gcs_path
     
     logging.info(f"Loading dataset from {FILE_PATH}...")
     fs = gcsfs.GCSFileSystem()
