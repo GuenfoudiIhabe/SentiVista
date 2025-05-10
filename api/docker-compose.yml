@@ -1,0 +1,26 @@
+services:
+  api:
+    build:
+      context: ./flask
+      dockerfile: Dockerfile
+    container_name: senti-api
+    ports:
+      - "5000:5000"
+    networks:
+      - senti-net
+
+  ui:
+    build:
+      context: ./streamlit
+      dockerfile: Dockerfile
+    container_name: senti-ui
+    ports:
+      - "8501:8501"
+    depends_on:
+      - api
+    networks:
+      - senti-net
+
+networks:
+  senti-net:
+    driver: bridge
