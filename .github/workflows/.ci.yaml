@@ -63,7 +63,6 @@ jobs:
       uses: google-github-actions/setup-gcloud@v1
       with:
         project_id: sentivista-453008
-        install_components: 'gcloud beta'
 
     - name: Docker Image
       run: |
