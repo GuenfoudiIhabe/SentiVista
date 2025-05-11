@@ -76,6 +76,7 @@ def batch_predict_roberta(texts):
         if 'roberta' not in model_cache:
             success, model_data, error = roberta_model.load_model(ROBERTA_MODEL_PATH)
             if not success:
+                print("failed loading model", flush=True)
                 raise Exception(error)
             model_cache['roberta'] = model_data
         else:
@@ -165,126 +166,6 @@ def predict():
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-@app.route('/')
-def home():
-    html_template = '''
-    <html>
-        <head>
-            <title>SentiVista Sentiment Analysis</title>
-            <style>
-                body { font-family: Arial; max-width: 800px; margin: 0 auto; padding: 20px; }
-                textarea { width: 100%; height: 100px; margin-bottom: 10px; }
-                button { padding: 10px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
-                .results { margin-top: 20px; }
-                .positive { color: green; font-weight: bold; }
-                .negative { color: red; font-weight: bold; }
-                .model-selection { margin-bottom: 15px; }
-                .model-option { margin-right: 10px; }
-                .confidence { font-size: 0.9em; color: #666; }
-            </style>
-        </head>
-        <body>
-            <h1>SentiVista Sentiment Analysis</h1>
-            
-            <div class="model-selection">
-                <h3>Select Model:</h3>
-                <label class="model-option">
-                    <input type="radio" name="model" value="lr" checked> Logistic Regression
-                </label>
-                <label class="model-option">
-                    <input type="radio" name="model" value="nb"> Naive Bayes
-                </label>
-                ''' + (''' 
-                <label class="model-option">
-                    <input type="radio" name="model" value="roberta"> RoBERTa (Deep Learning)
-                </label>
-                ''' if roberta_available else '''
-                <label class="model-option" style="color: #999; cursor: not-allowed;">
-                    <input type="radio" name="model" value="roberta" disabled> RoBERTa (Not Available)
-                </label>
-                <span class="note" style="display: block; color: #ff6600; font-size: 0.8em; margin-top: 5px;">
-                    Note: RoBERTa model is not available due to PyTorch/CUDA dependency issues.
-                </span>
-                ''') + '''
-            </div>
-            
-            <textarea id="textInput" placeholder="Enter text to analyze (separate multiple texts with new lines)">I love this app, it's amazing!
-This product is terrible, I hate it.</textarea>
-            <button onclick="analyzeSentiment()">Analyze Sentiment</button>
-            
-            <div class="results" id="results"></div>
-
-            <script>
-                async function analyzeSentiment() {
-                    const textInput = document.getElementById('textInput').value;
-                    const texts = textInput.split('\\n').filter(text => text.trim() !== '');
-                    
-                    // Get selected model
-                    const modelRadios = document.getElementsByName('model');
-                    let selectedModel = 'lr';
-                    for (const radio of modelRadios) {
-                        if (radio.checked) {
-                            selectedModel = radio.value;
-                            break;
-                        }
-                    }
-                    
-                    document.getElementById('results').innerHTML = '<p>Analyzing... Please wait, this may take a moment.</p>';
-                    
-                    try {
-                        const response = await fetch('/predict', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({ texts, model: selectedModel }),
-                        });
-                        
-                        const data = await response.json();
-                        
-                        if (data.error) {
-                            document.getElementById('results').innerHTML = `<p>Error: ${data.error}</p>`;
-                        } else {
-                            let resultsHtml = `<h2>Results (Using ${getModelName(selectedModel)}):</h2>`;
-                            
-                            texts.forEach((text, index) => {
-                                const sentiment = data.sentiment_labels[index];
-                                const sentimentClass = sentiment === 'Positive' ? 'positive' : 'negative';
-                                
-                                resultsHtml += `<p><strong>Text:</strong> ${text}<br>
-                                    <strong>Sentiment:</strong> <span class="${sentimentClass}">${sentiment}</span>`;
-                                
-                                // Add confidence score if available
-                                if (data.detailed_results && data.detailed_results[index]) {
-                                    const detail = data.detailed_results[index];
-                                    const confidence = detail.score || detail.confidence || 0;
-                                    resultsHtml += ` <span class="confidence">(Confidence: ${(confidence * 100).toFixed(2)}%)</span>`;
-                                }
-                                
-                                resultsHtml += `</p>`;
-                            });
-                            
-                            document.getElementById('results').innerHTML = resultsHtml;
-                        }
-                    } catch (error) {
-                        document.getElementById('results').innerHTML = `<p>Error: ${error.message}</p>`;
-                    }
-                }
-                
-                function getModelName(modelCode) {
-                    switch(modelCode) {
-                        case 'lr': return 'Logistic Regression';
-                        case 'nb': return 'Naive Bayes';
-                        case 'roberta': return 'RoBERTa Deep Learning';
-                        default: return modelCode;
-                    }
-                }
-            </script>
-        </body>
-    </html>
-    '''
-    return html_template
 
 if __name__ == '__main__':
     # Print status message about available models

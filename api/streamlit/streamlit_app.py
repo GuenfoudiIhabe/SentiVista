@@ -37,7 +37,7 @@ if st.button("Analyze"):
             # wrap in a spinner, since RoBERTa can be slow on first load
             with st.spinner(f"Contacting API for {MODEL_NAMES[model]}…"):
                 resp = requests.post(
-                    "http://api:5000/predict",   # <-- make sure your service is 'api'
+                    "https://senti-api-24294949938.europe-west1.run.app/predict",
                     json={"texts": texts, "model": model},
                     # no short timeout here
                 )
