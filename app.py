@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 import joblib
 import re
@@ -99,7 +99,68 @@ def predict():
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    return """
+    <html>
+        <head>
+            <title>SentiVista Sentiment Analysis</title>
+            <style>
+                body { font-family: Arial; max-width: 800px; margin: 0 auto;
+                    padding: 20px; }
+                textarea { width: 100%; height: 100px; margin-bottom: 10px; }
+                button { padding: 10px; background-color: #4CAF50;
+                    color: white; border: none; cursor: pointer; }
+                .results { margin-top: 20px; }
+                .positive { color: green; font-weight: bold; }
+                .negative { color: red; font-weight: bold; }
+            </style>
+        </head>
+        <body>
+            <h1>SentiVista Sentiment Analysis</h1>
+            <textarea id="textInput" placeholder="Enter text to analyze">
+            I love this app, it's amazing!</textarea>
+            <button onclick="analyzeSentiment()">Analyze Sentiment</button>
+            <div class="results" id="results"></div>
+            <script>
+                async function analyzeSentiment() {
+                    const textInput = document.getElementById('textInput').value;
+                    const texts = textInput.split('\\n').filter(
+                    text => text.trim() !== '');
+                    document.getElementById('results').innerHTML =
+                    '<p>Analyzing...</p>';
+                    try {
+                        const response = await fetch('/predict', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ texts }),
+                        });
+                        const data = await response.json();
+                        if (data.error) {
+                            document.getElementById('results').innerHTML =
+                            `<p>Error: ${data.error}</p>`;
+                        } else {
+                            let resultsHtml = '<h2>Results:</h2>';
+                            texts.forEach((text, index) => {
+                                const sentiment = data.sentiment_labels[index];
+                                const sentimentClass = sentiment === 'Positive' ?
+                                'positive' : 'negative';
+                                resultsHtml += `<p><strong>Text:</strong>
+                                ${text}<br><strong>Sentiment:</strong>
+                                <span class="${sentimentClass}">${sentiment}
+                                </span></p>`;
+                            });
+                            document.getElementById('results').innerHTML = resultsHtml;
+                        }
+                    } catch (error) {
+                        document.getElementById('results').innerHTML = `<p>Error:
+                            ${error.message}</p>`;
+                    }
+                }
+            </script>
+        </body>
+    </html>
+    """
 
 
 if __name__ == "__main__":

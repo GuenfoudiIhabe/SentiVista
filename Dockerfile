@@ -8,7 +8,6 @@ COPY app.py /app
 COPY sentiment_model_lr.pkl /app
 COPY tfidf_vectorizer.pkl /app
 COPY requirements.txt /app
-COPY index.html /app
 
 ENV PORT 5001
 
