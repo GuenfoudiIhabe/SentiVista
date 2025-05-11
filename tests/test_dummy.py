@@ -1,3 +1,3 @@
-def dummy_test():
+def test_dummy():
     print("No test implemented.")
     assert True
