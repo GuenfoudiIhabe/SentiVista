@@ -2,7 +2,7 @@ name: Python CI/CD Cloud Run Deployment
 
 on:
   push:
-    branches: [main, dev]
+    branches: [main, dev, feature/github-actions]
   pull_request:
     branches: [main, dev]
 
@@ -49,22 +49,16 @@ jobs:
         project_id: sentivista-453008
         install_components: 'gcloud beta'
 
-    - name: Docker auth for Artifact Registry
+    - name: Docker Image
       run: |
         gcloud auth configure-docker europe-west1-docker.pkg.dev
-
-    - name: Build Docker image
-      run: |
-        docker build -t europe-west1-docker.pkg.dev/sentivista-453008/Sentivista-automatic-deployment/app .
-
-    - name: Push Docker image
-      run: |
-        docker push europe-west1-docker.pkg.dev/sentivista-453008/Sentivista-automatic-deployment/app
+        docker build -t europe-west1-docker.pkg.dev/sentivista-453008/automatic-deployment/app .
+        docker push europe-west1-docker.pkg.dev/sentivista-453008/automatic-deployment/app
 
     - name: Deploy to Cloud Run
       run: |
         gcloud run deploy app \
-          --image europe-west1-docker.pkg.dev/sentivista-453008/Sentivista-automatic-deployment/app \
+          --image europe-west1-docker.pkg.dev/sentivista-453008/automatic-deployment/app \
           --region europe-west1 \
           --platform managed \
           --allow-unauthenticated
