@@ -6,3 +6,4 @@ joblib
 nltk
 scikit-learn==1.5.1
 scipy
+pre-commit
