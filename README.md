@@ -4,12 +4,10 @@
 
 # SentiVista: Social Media Sentiment Analysis
 
-## **Milestone 2 Review**
+## **Milestone 3 Review**
 
 What's new ?
-- few modifications in app.py
-- Dockerfile + requirements.txt
-- cloud deployement (https://app-24294949938.europe-west1.run.app)
+`TODO`
 
 ## 📊 Overview
 
