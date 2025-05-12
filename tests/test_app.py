@@ -1,8 +1,10 @@
-import sys
 import os
+import sys
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from api.flask.app import clean_tweet
+
 
 def test_clean_tweet():
     # Test URL removal
