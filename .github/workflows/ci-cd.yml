@@ -2,7 +2,7 @@ name: SentiVista CI/CD
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, ci-cd-setup ]  # Added ci-cd-setup branch here
     paths:
       - 'README.md'
       - 'api/flask/**'
